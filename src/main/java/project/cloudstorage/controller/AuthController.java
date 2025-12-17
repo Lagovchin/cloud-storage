@@ -50,11 +50,22 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto, HttpServletRequest request) {
+    public ResponseEntity<UserResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto,
+                                                  HttpServletRequest request,
+                                                  HttpServletResponse response
+    ) {
 
         User user = userService.register(signUpRequestDto);
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(signUpRequestDto.getUsername(), signUpRequestDto.getPassword());
 
-        request.getSession(true);
+        Authentication auth = authenticationManager.authenticate(authToken);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(auth);
+        SecurityContextHolder.setContext(context);
+
+        securityContextRepository.saveContext(context, request, response);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponseDto(user.getUsername()));
     }
