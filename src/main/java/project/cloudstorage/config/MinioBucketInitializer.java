@@ -1,4 +1,4 @@
-package project.cloudstorage.storage;
+package project.cloudstorage.config;
 
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import project.cloudstorage.config.StorageS3Properties;
 
 @Component
 @RequiredArgsConstructor

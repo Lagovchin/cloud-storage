@@ -39,9 +39,10 @@ public class MinioStorageService implements StorageService {
             }
 
             String relativeName = objectKey.substring(prefix.length());
+            boolean looksLikeDirMarker = relativeName.endsWith("/");
 
-            if (item.isDir()) {
-                String directoryName = path.removeTrailingSlash(relativeName);
+            if (item.isDir() || looksLikeDirMarker) {
+                String directoryName = path.removeTrailingSlash(relativeName) + "/";
 
                 result.add(new ResourceInfo(
                         normalizedDirectoryPath,
@@ -140,7 +141,9 @@ public class MinioStorageService implements StorageService {
             objectKeys.add(key);
         }
 
-        if (objectKeys.isEmpty()) {
+        boolean directoryExists = minio.exists(dirPrefix) || minio.hasAnyObject(dirPrefix);
+
+        if (objectKeys.isEmpty() && !directoryExists) {
             throw new ResourceNotFoundException("Resource not found: " + rawPath);
         }
 
@@ -279,7 +282,7 @@ public class MinioStorageService implements StorageService {
 
         String dirWithoutSlash = path.removeTrailingSlash(normalizedToDir);
         String parent = path.parentDirectory(dirWithoutSlash);
-        String name = path.fileName(dirWithoutSlash);
+        String name = path.fileName(dirWithoutSlash) + "/";
 
         return new ResourceInfo(parent, name, null, ResourceType.DIRECTORY);
     }
@@ -309,7 +312,7 @@ public class MinioStorageService implements StorageService {
 
             String withoutTrailingSlash = path.removeTrailingSlash(directory);
             String parentDir = path.parentDirectory(withoutTrailingSlash);
-            String name = path.fileName(withoutTrailingSlash);
+            String name = path.fileName(withoutTrailingSlash) + "/";
 
             return new ResourceInfo(parentDir, name, null, ResourceType.DIRECTORY);
         }
@@ -360,7 +363,7 @@ public class MinioStorageService implements StorageService {
 
         minio.putEmptyObject(dirKey);
 
-        String name = path.fileName(withoutTrailingSlash);
+        String name = path.fileName(withoutTrailingSlash) + "/";
         return new ResourceInfo(parentDir, name, null, ResourceType.DIRECTORY);
     }
 
@@ -407,7 +410,7 @@ public class MinioStorageService implements StorageService {
             if (isDirectoryMarker) {
                 String withoutSlash = path.removeTrailingSlash(relative);
                 String parentDir = path.parentDirectory(withoutSlash);
-                String dirName = path.fileName(withoutSlash);
+                String dirName = path.fileName(withoutSlash) + "/";
 
                 info = new ResourceInfo(parentDir, dirName, null, ResourceType.DIRECTORY);
             } else {

@@ -24,8 +24,8 @@ public class ResourceController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<ResourceInfo>> upload(@RequestParam String path,
-                                                     @RequestParam("file") List<MultipartFile> files,
+    public ResponseEntity<List<ResourceInfo>> upload(@RequestParam(value = "path", required = false) String path,
+                                                     @RequestPart("object") List<MultipartFile> files,
                                                      @AuthenticationPrincipal SecurityUser user
     ) {
         List<ResourceInfo> uploaded = storageService.upload(user.getId(), path, files);

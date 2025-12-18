@@ -12,6 +12,11 @@ spring:
       host: localhost
       port: 6379
 
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
+
   session:
     timeout: 30m
     data:
@@ -26,3 +31,7 @@ storage:
     accessKey: minioadmin
     secretKey: minioadmin123
     bucket: user-files
+
+logging:
+  level:
+    root: info
