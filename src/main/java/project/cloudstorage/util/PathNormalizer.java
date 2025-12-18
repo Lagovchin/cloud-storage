@@ -1,4 +1,4 @@
-package project.cloudstorage.storage;
+package project.cloudstorage.util;
 
 import org.springframework.stereotype.Component;
 

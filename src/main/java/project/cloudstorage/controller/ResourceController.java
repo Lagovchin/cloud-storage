@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import project.cloudstorage.config.SecurityUser;
-import project.cloudstorage.storage.DownloadContent;
+import project.cloudstorage.util.DownloadContent;
 import project.cloudstorage.dto.ResourceInfo;
-import project.cloudstorage.storage.StorageService;
+import project.cloudstorage.service.StorageService;
 
 import java.util.List;
 

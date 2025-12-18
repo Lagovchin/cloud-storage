@@ -7,23 +7,21 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
+  session:
+    store-type: redis
+    session:
+      timeout: 30m
+      data:
+        redis:
+          namespace: cloud-storage:session
+        flush-mode: on-save
+        save-mode: on-set-attribute
+
   data:
     redis:
       host: localhost
       port: 6379
 
-  servlet:
-    multipart:
-      max-file-size: 2GB
-      max-request-size: 2GB
-
-  session:
-    timeout: 30m
-    data:
-      redis:
-        namespace: cloud-storage:session
-        flush-mode: on-save
-        save-mode: on-set-attribute
 
 storage:
   s3:

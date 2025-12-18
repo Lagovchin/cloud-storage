@@ -12,10 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import project.cloudstorage.config.TestPostgresContainer;
 import project.cloudstorage.dto.SignUpRequestDto;
-import project.cloudstorage.entity.User;
+import project.cloudstorage.user.User;
 import project.cloudstorage.exception.UserAlreadyExistException;
-import project.cloudstorage.repository.UserRepository;
-import project.cloudstorage.service.UserService;
+import project.cloudstorage.user.UserRepository;
+import project.cloudstorage.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,7 +1,8 @@
-package project.cloudstorage.storage;
+package project.cloudstorage.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import project.cloudstorage.dto.ResourceInfo;
+import project.cloudstorage.util.DownloadContent;
 
 import java.util.List;
 

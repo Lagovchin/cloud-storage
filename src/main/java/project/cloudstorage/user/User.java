@@ -1,4 +1,4 @@
-package project.cloudstorage.entity;
+package project.cloudstorage.user;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

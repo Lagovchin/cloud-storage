@@ -1,4 +1,4 @@
-package project.cloudstorage.dto;
+package project.cloudstorage.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

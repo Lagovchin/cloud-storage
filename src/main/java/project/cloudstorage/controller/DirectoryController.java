@@ -7,7 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.cloudstorage.config.SecurityUser;
 import project.cloudstorage.dto.ResourceInfo;
-import project.cloudstorage.storage.StorageService;
+import project.cloudstorage.service.StorageService;
 
 import java.util.List;
 

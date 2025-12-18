@@ -2,6 +2,7 @@ package project.cloudstorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.cloudstorage.dto.SignInRequestDto;
 import project.cloudstorage.dto.SignUpRequestDto;
-import project.cloudstorage.dto.UserResponseDto;
-import project.cloudstorage.entity.User;
-import project.cloudstorage.service.UserService;
+import project.cloudstorage.user.UserResponseDto;
+import project.cloudstorage.user.User;
+import project.cloudstorage.user.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,7 +33,7 @@ public class AuthController {
     private final SecurityContextRepository securityContextRepository;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<UserResponseDto> signIn(@RequestBody SignInRequestDto signInRequestDto,
+    public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid SignInRequestDto signInRequestDto,
                                                   HttpServletRequest request,
                                                   HttpServletResponse response
     ) {
@@ -50,7 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto,
+    public ResponseEntity<UserResponseDto> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto,
                                                   HttpServletRequest request,
                                                   HttpServletResponse response
     ) {

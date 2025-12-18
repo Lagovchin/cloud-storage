@@ -1,6 +1,7 @@
-package project.cloudstorage.storage;
+package project.cloudstorage.util;
 
 import lombok.RequiredArgsConstructor;
+import project.cloudstorage.service.MinioGateway;
 
 import java.io.IOException;
 import java.io.InputStream;
