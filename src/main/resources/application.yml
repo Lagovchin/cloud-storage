@@ -30,6 +30,5 @@ storage:
     secretKey: minioadmin123
     bucket: user-files
 
-logging:
-  level:
-    root: info
+springdoc:
+  override-with-generic-response: false

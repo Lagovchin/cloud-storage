@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import project.cloudstorage.api.DirectoryApi;
 import project.cloudstorage.config.SecurityUser;
 import project.cloudstorage.dto.ResourceInfo;
 import project.cloudstorage.service.StorageService;
@@ -14,11 +15,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/directory")
 @RequiredArgsConstructor
-public class DirectoryController {
+public class DirectoryController implements DirectoryApi {
 
     private final StorageService storageService;
 
     @GetMapping
+    @Override
     public ResponseEntity<List<ResourceInfo>> list(@RequestParam(required = false) String path,
                                                    @AuthenticationPrincipal SecurityUser user
     ) {
@@ -26,6 +28,7 @@ public class DirectoryController {
     }
 
     @PostMapping
+    @Override
     public ResponseEntity<ResourceInfo> createDirectory(@RequestParam String path,
                                                         @AuthenticationPrincipal SecurityUser user
     ) {

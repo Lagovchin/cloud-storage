@@ -14,7 +14,6 @@ import project.cloudstorage.config.TestPostgresContainer;
 import project.cloudstorage.dto.SignUpRequestDto;
 import project.cloudstorage.user.User;
 import project.cloudstorage.exception.UserAlreadyExistException;
-import project.cloudstorage.user.UserRepository;
 import project.cloudstorage.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,9 +29,6 @@ public class UserServiceTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -67,15 +63,12 @@ public class UserServiceTest {
 
     @Test
     void successfulSignIn() {
-        // given — пользователь существует
         userService.register(new SignUpRequestDto("alex", "12345"));
 
-        // when — пробуем залогиниться
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken("alex", "12345")
         );
 
-        // then
         assertTrue(auth.isAuthenticated());
         assertEquals("alex", auth.getName());
     }

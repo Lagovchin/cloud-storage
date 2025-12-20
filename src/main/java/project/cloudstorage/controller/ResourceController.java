@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import project.cloudstorage.api.ResourceApi;
 import project.cloudstorage.config.SecurityUser;
 import project.cloudstorage.util.DownloadContent;
 import project.cloudstorage.dto.ResourceInfo;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/resource")
 @RequiredArgsConstructor
-public class ResourceController {
+public class ResourceController implements ResourceApi {
 
     private final StorageService storageService;
 
@@ -24,8 +25,9 @@ public class ResourceController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<List<ResourceInfo>> upload(@RequestParam(value = "path", required = false) String path,
-                                                     @RequestPart("object") List<MultipartFile> files,
+                                                     @RequestPart(name = "object") List<MultipartFile> files,
                                                      @AuthenticationPrincipal SecurityUser user
     ) {
         List<ResourceInfo> uploaded = storageService.upload(user.getId(), path, files);
@@ -36,6 +38,7 @@ public class ResourceController {
             value = "/download",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
+    @Override
     public ResponseEntity<StreamingResponseBody> download(@RequestParam String path,
                                                           @AuthenticationPrincipal SecurityUser user
     ) {
@@ -53,11 +56,13 @@ public class ResourceController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
     public void delete(@RequestParam String path, @AuthenticationPrincipal SecurityUser user) {
         storageService.delete(user.getId(), path);
     }
 
     @GetMapping("/move")
+    @Override
     public ResponseEntity<ResourceInfo> move(@RequestParam String from,
                                              @RequestParam String to,
                                              @AuthenticationPrincipal SecurityUser user
@@ -66,11 +71,13 @@ public class ResourceController {
     }
 
     @GetMapping
+    @Override
     public ResponseEntity<ResourceInfo> getInfo(@RequestParam String path, @AuthenticationPrincipal SecurityUser user) {
         return ResponseEntity.ok(storageService.getInfo(user.getId(), path));
     }
 
     @GetMapping("/search")
+    @Override
     public ResponseEntity<List<ResourceInfo>> search(@RequestParam String query,
                                                      @AuthenticationPrincipal SecurityUser user
     ) {
