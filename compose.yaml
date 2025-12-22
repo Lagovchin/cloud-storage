@@ -1,58 +1,94 @@
-version: "3.9"
-
 services:
   redis:
     image: redis:7-alpine
     container_name: cloud_redis
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
     volumes:
       - redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]
-
 
   postgres:
     image: postgres:15
     container_name: cloud-postgres
     restart: unless-stopped
+    env_file: .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
 
   minio:
     image: minio/minio:latest
     container_name: cloud-minio
+    restart: unless-stopped
+    env_file: .env
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
     volumes:
       - minio_data:/data
+    # Если хочешь MinIO Console из браузера:
+    ports:
+      - "9001:9001"
 
   minio-init:
     image: minio/mc:latest
     container_name: cloud-minio-init
     depends_on:
       - minio
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    env_file: .env
     entrypoint: >
       /bin/sh -c "
-      until mc alias set myminio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do sleep 1; done;
+      until mc alias set myminio http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD; do sleep 1; done;
       mc mb -p myminio/user-files || true;
       mc anonymous set none myminio/user-files || true;
       echo 'MinIO bucket user-files is ready';
       "
 
+  app:
+    container_name: cloud-app
+    build:
+      context: .
+      # Можешь убрать network: host, но если сеть/SSL снова начнёт чудить при сборке, оставь.
+      network: host
+    restart: unless-stopped
+
+    # Режим 1: проще всего (доступ снаружи по http://IP:8080)
+    ports:
+      - "8080:8080"
+
+    # Режим 2: только локально, если используешь nginx (тогда закомментируй 8080:8080 и включи это)
+    # ports:
+    #   - "127.0.0.1:8080:8080"
+
+    env_file: .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+      STORAGE_S3_ENDPOINT: http://minio:9000
+      STORAGE_S3_ACCESSKEY: ${MINIO_ROOT_USER}
+      STORAGE_S3_SECRETKEY: ${MINIO_ROOT_PASSWORD}
+      STORAGE_S3_BUCKET: user-files
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:

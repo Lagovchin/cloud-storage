@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cloud_storage
-    username: cloud_user
-    password: cloud_password
+    username:
+    password:
 
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
@@ -22,12 +22,22 @@ spring:
       host: localhost
       port: 6379
 
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
+      location: /tmp
+      file-size-threshold: 2MB
+
+server:
+  tomcat:
+    max-swallow-size: -1
 
 storage:
   s3:
     endpoint: http://localhost:9000
-    accessKey: minioadmin
-    secretKey: minioadmin123
+    accessKey:
+    secretKey:
     bucket: user-files
 
 springdoc:
