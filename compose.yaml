@@ -16,9 +16,9 @@ services:
     container_name: cloud-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: cloud_storage
-      POSTGRES_USER: cloud_user
-      POSTGRES_PASSWORD: cloud_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -52,13 +52,9 @@ services:
       mc anonymous set none myminio/user-files || true;
       echo 'MinIO bucket user-files is ready';
       "
-      
-      
+
+
 volumes:
   postgres_data:
   minio_data:
   redis_data:
-
-
-
-
