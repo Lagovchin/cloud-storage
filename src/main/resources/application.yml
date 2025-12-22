@@ -1,26 +1,24 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/cloud_storage
-    username:
-    password:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${POSTGRES_DB:cloud_storage}
+    username: ${POSTGRES_USER:cloud_user}
+    password: ${POSTGRES_PASSWORD:cloud_password}
 
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
   session:
     store-type: redis
-    session:
-      timeout: 30m
-      data:
-        redis:
-          namespace: cloud-storage:session
-        flush-mode: on-save
-        save-mode: on-set-attribute
+    timeout: 30m
+    redis:
+      namespace: ${REDIS_NAMESPACE:cloud-storage:session}
+      flush-mode: on-save
+      save-mode: on-set-attribute
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   servlet:
     multipart:
@@ -35,10 +33,10 @@ server:
 
 storage:
   s3:
-    endpoint: http://localhost:9000
-    accessKey:
-    secretKey:
-    bucket: user-files
+    endpoint: ${STORAGE_S3_ENDPOINT:http://localhost:9000}
+    accessKey: ${STORAGE_S3_ACCESSKEY:minioadmin}
+    secretKey: ${STORAGE_S3_SECRETKEY:minioadmin123}
+    bucket: ${STORAGE_S3_BUCKET:user-files}
 
 springdoc:
   override-with-generic-response: false
